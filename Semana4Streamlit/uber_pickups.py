@@ -12,7 +12,7 @@ DATA_SOURCE = 'https://s3-us-west-2.amazonaws.com/streamlit-demo-data/uber-raw-d
 @st.cache(allow_output_mutation=True)
 
 def download_data():
-    return (pd.read_csv(DATA_SOURCE, nrows=10000).rename(columns={'Lat':'lat','Lon':'lon'}))
+    return (pd.read_csv(DATA_SOURCE).rename(columns={'Lat':'lat','Lon':'lon'}))
 
 df = download_data()
 
@@ -39,11 +39,19 @@ st.write('page selected', slider, 'with_limits',(((slider-1)*page_size),(slider*
 df2 = df2.loc[((slider-1)*page_size):(slider*page_size)-1]
 df2
 
+st.subheader('Mapa')
+
 st.map(df2)
 
 graph = pd.to_datetime(df['Date/Time']).dt.hour
 
-st.bar_chart(graph)
+hist_values = np.histogram(
+    graph, bins=24, range=(0,24))[0]
+
+st.subheader('Histograma')
+
+st.bar_chart(hist_values)
+
 
 
 
